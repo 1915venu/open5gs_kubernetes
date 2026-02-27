@@ -1,0 +1,30 @@
+apiVersion: v1
+data:
+  upf.yaml: |
+    logger:
+      level: info
+
+    upf:
+      pfcp:
+        server:
+        - dev: eth0
+        client:
+      gtpu:
+        server:
+        - dev: eth0
+      session:
+        -
+          dev: ogstun
+          dnn: internet
+          gateway: 10.45.0.1
+          subnet: 10.45.0.0/16
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"upf.yaml":"logger:\n  level: info\n\nupf:\n  pfcp:\n    server:\n    - dev: eth0\n    client:\n  gtpu:\n    server:\n    - dev: eth0\n  session:\n    -\n      dev: ogstun\n      dnn: internet\n      gateway: 10.45.0.1\n      subnet: 10.45.0.0/16\n"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"open5gs-upf","namespace":"open5gs-upf"}}
+  creationTimestamp: "2026-02-20T20:24:48Z"
+  name: open5gs-upf
+  namespace: open5gs-upf
+  resourceVersion: "259032"
+  uid: f02fa882-4e49-48be-bf06-2891f7b7e302

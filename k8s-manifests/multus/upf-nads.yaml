@@ -1,0 +1,84 @@
+apiVersion: v1
+items:
+- apiVersion: k8s.cni.cncf.io/v1
+  kind: NetworkAttachmentDefinition
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"k8s.cni.cncf.io/v1","kind":"NetworkAttachmentDefinition","metadata":{"annotations":{},"name":"open5gs-n3","namespace":"open5gs-upf"},"spec":{"config":"{\n  \"cniVersion\": \"0.3.1\",\n  \"name\": \"open5gs-n3\",\n  \"type\": \"macvlan\",\n  \"master\": \"dummy-n3n4\",\n  \"mode\": \"bridge\",\n  \"ipam\": {\n    \"type\": \"static\",\n    \"addresses\": [{\"address\": \"192.168.100.10/24\"}],\n    \"routes\": [\n      {\"dst\": \"10.42.0.0/16\", \"gw\": \"192.168.100.254\"},\n      {\"dst\": \"10.45.0.0/16\", \"gw\": \"192.168.100.254\"}\n    ]\n  }\n}\n"}}
+    creationTimestamp: "2026-02-24T18:45:54Z"
+    generation: 1
+    name: open5gs-n3
+    namespace: open5gs-upf
+    resourceVersion: "416542"
+    uid: 0575a2e4-999e-4b7a-ac71-7362d0909e26
+  spec:
+    config: |
+      {
+        "cniVersion": "0.3.1",
+        "name": "open5gs-n3",
+        "type": "macvlan",
+        "master": "dummy-n3n4",
+        "mode": "bridge",
+        "ipam": {
+          "type": "static",
+          "addresses": [{"address": "192.168.100.10/24"}],
+          "routes": [
+            {"dst": "10.42.0.0/16", "gw": "192.168.100.254"},
+            {"dst": "10.45.0.0/16", "gw": "192.168.100.254"}
+          ]
+        }
+      }
+- apiVersion: k8s.cni.cncf.io/v1
+  kind: NetworkAttachmentDefinition
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"k8s.cni.cncf.io/v1","kind":"NetworkAttachmentDefinition","metadata":{"annotations":{},"name":"open5gs-n4","namespace":"open5gs-upf"},"spec":{"config":"{\n  \"cniVersion\": \"0.3.1\",\n  \"name\": \"open5gs-n4\",\n  \"type\": \"macvlan\",\n  \"master\": \"dummy-n3n4\",\n  \"mode\": \"bridge\",\n  \"ipam\": {\n    \"type\": \"static\",\n    \"addresses\": [{\"address\": \"192.168.100.11/24\"}]\n  }\n}\n"}}
+    creationTimestamp: "2026-02-24T18:45:54Z"
+    generation: 1
+    name: open5gs-n4
+    namespace: open5gs-upf
+    resourceVersion: "416543"
+    uid: 7c48bc29-43ea-4b95-9d23-0e830642a084
+  spec:
+    config: |
+      {
+        "cniVersion": "0.3.1",
+        "name": "open5gs-n4",
+        "type": "macvlan",
+        "master": "dummy-n3n4",
+        "mode": "bridge",
+        "ipam": {
+          "type": "static",
+          "addresses": [{"address": "192.168.100.11/24"}]
+        }
+      }
+- apiVersion: k8s.cni.cncf.io/v1
+  kind: NetworkAttachmentDefinition
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"k8s.cni.cncf.io/v1","kind":"NetworkAttachmentDefinition","metadata":{"annotations":{},"name":"open5gs-n6","namespace":"open5gs-upf"},"spec":{"config":"{\n  \"cniVersion\": \"0.3.1\",\n  \"name\": \"open5gs-n6\",\n  \"type\": \"macvlan\",\n  \"master\": \"dummy-n3n4\",\n  \"mode\": \"bridge\",\n  \"ipam\": {\n    \"type\": \"static\",\n    \"addresses\": [{\"address\": \"192.168.100.12/24\"}]\n  }\n}\n"}}
+    creationTimestamp: "2026-02-24T18:45:54Z"
+    generation: 1
+    name: open5gs-n6
+    namespace: open5gs-upf
+    resourceVersion: "416544"
+    uid: 750662ce-b707-421e-b7ef-af5124e96f60
+  spec:
+    config: |
+      {
+        "cniVersion": "0.3.1",
+        "name": "open5gs-n6",
+        "type": "macvlan",
+        "master": "dummy-n3n4",
+        "mode": "bridge",
+        "ipam": {
+          "type": "static",
+          "addresses": [{"address": "192.168.100.12/24"}]
+        }
+      }
+kind: List
+metadata:
+  resourceVersion: ""

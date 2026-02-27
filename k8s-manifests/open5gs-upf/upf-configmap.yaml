@@ -1,0 +1,79 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: open5gs-upf
+  namespace: open5gs-upf
+data:
+  upf.yaml: |
+    logger:
+      level: info
+
+    upf:
+      pfcp:
+        server:
+        - dev: eth0
+          advertise: 10.43.220.219
+        client:
+      gtpu:
+        server:
+        - dev: eth0
+      session:
+        -
+          dev: ogstun
+          dnn: internet
+          gateway: 10.45.0.1
+          subnet: 10.45.0.0/16
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: open5gs-upf-entrypoint
+  namespace: open5gs-upf
+data:
+  k8s-entrypoint.sh: |
+    #!/bin/bash
+    set -e
+
+    echo "Executing k8s customized entrypoint.sh"
+    echo "Creating net device ogstun"
+    if grep "ogstun" /proc/net/dev > /dev/null 2>&1; then
+        echo "Warning: Net device ogstun already exists, skipping creation"
+    else
+        ip tuntap add name ogstun mode tun
+        ip link set ogstun up
+        ip link set dev ogstun txqueuelen 4096
+        echo "Setting IP 10.45.0.1 to device ogstun"
+        ip addr add 10.45.0.1/16 dev ogstun
+    fi
+
+    sysctl -w net.ipv4.ip_forward=1
+    iptables -t nat -A POSTROUTING -s 10.45.0.0/16 ! -o ogstun -j MASQUERADE || true
+
+    $@
+  upf-start.sh: |
+    #!/bin/bash
+    # Run in main container: setup NAT + ip_forward then start UPF
+    echo "Setting up networking in main container..."
+    sysctl -w net.ipv4.ip_forward=1 || true
+    iptables -t nat -A POSTROUTING -s 10.45.0.0/16 ! -o ogstun -j MASQUERADE 2>/dev/null || true
+
+    # Wait for Multus to attach N3 (net1) and N4 (net2) interfaces
+    echo "Waiting for Multus interfaces (net1=N3, net2=N4)..."
+    for i in $(seq 1 30); do
+      NET1=$(ip link show net1 2>/dev/null | wc -l)
+      NET2=$(ip link show net2 2>/dev/null | wc -l)
+      if [ "$NET1" -gt 0 ] && [ "$NET2" -gt 0 ]; then
+        echo "Multus interfaces net1 and net2 are up!"
+        break
+      fi
+      echo "  Waiting... ($i/30)"
+      sleep 2
+    done
+
+    ip link show net1 2>/dev/null && echo "net1 (N3) confirmed" || echo "WARNING: net1 not found"
+    ip link show net2 2>/dev/null && echo "net2 (N4) confirmed" || echo "WARNING: net2 not found"
+    ip addr show
+
+    echo "NAT rules applied. Starting open5gs-upfd..."
+    exec open5gs-upfd

@@ -1,0 +1,129 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2026-02-25T21:02:00Z"
+    labels:
+      app: iperf3-app
+    name: iperf3-svc
+    namespace: open5gs-upf
+    resourceVersion: "473075"
+    uid: def7664f-ea34-4e3e-9e86-2c52ad818799
+  spec:
+    clusterIP: 10.43.145.249
+    clusterIPs:
+    - 10.43.145.249
+    externalTrafficPolicy: Cluster
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - nodePort: 32034
+      port: 5201
+      protocol: TCP
+      targetPort: 5201
+    selector:
+      app: iperf3-app
+    sessionAffinity: None
+    type: NodePort
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"open5gs-upf-gtpu","namespace":"open5gs-upf"},"spec":{"ports":[{"name":"gtpu","nodePort":31085,"port":2152,"protocol":"UDP","targetPort":2152}],"selector":{"app":"upf"},"type":"NodePort"}}
+    creationTimestamp: "2026-02-20T20:24:48Z"
+    name: open5gs-upf-gtpu
+    namespace: open5gs-upf
+    resourceVersion: "259044"
+    uid: 2bc6f3e7-1360-45c8-ba51-6073d4f97075
+  spec:
+    clusterIP: 10.43.175.34
+    clusterIPs:
+    - 10.43.175.34
+    externalTrafficPolicy: Cluster
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: gtpu
+      nodePort: 31085
+      port: 2152
+      protocol: UDP
+      targetPort: 2152
+    selector:
+      app: upf
+    sessionAffinity: None
+    type: NodePort
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"open5gs-upf-metrics","namespace":"open5gs-upf"},"spec":{"ports":[{"name":"metrics","port":9090,"protocol":"TCP","targetPort":9090}],"selector":{"app":"upf"},"type":"ClusterIP"}}
+    creationTimestamp: "2026-02-20T20:24:48Z"
+    name: open5gs-upf-metrics
+    namespace: open5gs-upf
+    resourceVersion: "259054"
+    uid: 27fab2ae-cdf6-4b3b-a104-f5985d1f60e9
+  spec:
+    clusterIP: 10.43.238.67
+    clusterIPs:
+    - 10.43.238.67
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: metrics
+      port: 9090
+      protocol: TCP
+      targetPort: 9090
+    selector:
+      app: upf
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"open5gs-upf-pfcp","namespace":"open5gs-upf"},"spec":{"ports":[{"name":"pfcp","nodePort":30805,"port":8805,"protocol":"UDP","targetPort":8805}],"selector":{"app":"upf"},"type":"NodePort"}}
+    creationTimestamp: "2026-02-20T20:25:04Z"
+    name: open5gs-upf-pfcp
+    namespace: open5gs-upf
+    resourceVersion: "259085"
+    uid: 05f11ce7-0430-48bc-8266-39c3fd5cd108
+  spec:
+    clusterIP: 10.43.220.219
+    clusterIPs:
+    - 10.43.220.219
+    externalTrafficPolicy: Cluster
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: pfcp
+      nodePort: 30805
+      port: 8805
+      protocol: UDP
+      targetPort: 8805
+    selector:
+      app: upf
+    sessionAffinity: None
+    type: NodePort
+  status:
+    loadBalancer: {}
+kind: List
+metadata:
+  resourceVersion: ""
