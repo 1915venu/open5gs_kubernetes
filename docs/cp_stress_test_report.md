@@ -92,7 +92,7 @@ UDR      █                                                 3.1%
 AUSF     █                                                 1.5%
 ```
 
-> [!IMPORTANT]
+> 
 > **MongoDB consumed 10–20× more CPU than any Open5GS NF during registration floods.** Every UE registration triggers multiple MongoDB queries (subscriber lookup, authentication vector fetch, session data). At 96% peak CPU, MongoDB is saturated — any further load or CPU limits would directly increase registration latency.
 
 ### Finding 2: NF CPU Scales Linearly with UE Count
@@ -113,7 +113,7 @@ Despite 200 concurrent registrations at 100ms intervals (10 registrations/second
 
 ### Finding 4: Resource Constraints Cause Catastrophic Registration Failure
 
-To prove that resource constraints directly cause registration degradation, MongoDB's CPU was throttled to **5% of 1 core** via direct cgroup v2 manipulation (`cpu.max = 5000 100000`), and the AMF was limited to 100m via Kubernetes.
+To prove that resource constraints directly cause registration degradation, MongoDB's CPU was throttled to **5% of 1 core** via direct cgroup v2 manipulation, and the AMF was limited to 100m via Kubernetes.
 
 **Test 4: 200 UEs @ 100ms interval — MongoDB CPU throttled to 5%**
 
@@ -136,14 +136,14 @@ To prove that resource constraints directly cause registration degradation, Mong
 | **At 10s mark** | 88 registered | 36 registered | **59% slower** |
 | **At 20s mark** | 188 registered | 69 registered | **63% slower** |
 
-> [!CAUTION]
+> 
 > **Throttling MongoDB from unlimited to 5% CPU caused 65% of registrations to fail.** All 200 UEs completed authentication but only 69 received Registration Accept — the rest timed out waiting for MongoDB subscriber queries. AMF memory grew 53% (from 84 MiB to 142 MiB) from queued pending registrations.
 
 **Method:** Direct cgroup v2 `cpu.max` write — equivalent to Kubernetes `resources.limits.cpu: 50m` but applied to a running container without pod restart.
 
 ### Finding 5: Edge Deployment Simulation — ALL NFs Constrained
 
-To simulate a realistic **resource-constrained edge/MEC deployment** (e.g., stadium, disaster zone), ALL 6 control plane NFs were simultaneously throttled via cgroup v2:
+To simulate a realistic **resource-constrained edge/MEC deployment** , ALL 6 control plane NFs were simultaneously throttled via cgroup v2:
 
 | NF | CPU Limit | Rationale |
 |----|-----------|-----------|
@@ -163,8 +163,8 @@ To simulate a realistic **resource-constrained edge/MEC deployment** (e.g., stad
 | **AMF Peak CPU** | 6.3% | **14.4%** (+129%) | Backed up |
 | **MongoDB Memory** | 228 MiB | **294 MiB** (+29%) | Query queue |
 
-> [!CAUTION]
-> **A realistic 2-core edge deployment fails to handle a 200-UE registration storm.** 45% of registrations fail, and those that succeed take 61% longer. This simulates a real-world scenario: a small cell site at a stadium or disaster zone where hundreds of UEs attempt simultaneous registration on constrained infrastructure.
+> 
+> **A realistic 2-core edge deployment fails to handle a 200-UE registration storm.** 45% of registrations fail, and those that succeed take 61% longer. This simulates a real-world scenario: a small cell site  where hundreds of UEs attempt simultaneous registration on constrained infrastructure.
 
 ### Finding 6: Uniform 200m Limit — Complete Service Outage
 
@@ -178,7 +178,7 @@ When ALL 6 NFs are given **identical 200m CPU limits** (total 1.2 cores), the 5G
 | **MongoDB Peak CPU** | 84% | 31% (CAPPED) |
 | **AMF Peak CPU** | 6.3% | 2.6% |
 
-> [!CAUTION]
+> 
 > **At uniform 200m per NF (1.2 cores total), the SBI authentication chain completely breaks.** MongoDB cannot process subscriber queries fast enough, causing cascading SBI timeouts. AMF rejects all registrations after 10s timeout. This represents a total denial of service — zero UEs can attach to the network.
 
 ### Summary: Registration Success vs CPU Budget
@@ -190,7 +190,7 @@ When ALL 6 NFs are given **identical 200m CPU limits** (total 1.2 cores), the 5G
 | Uniform 200m (1.2 cores) | 1.2 cores | **0%** (0/200) |
 | MongoDB-only throttled | MongoDB: 50m, others: unlimited | **34.5%** (69/200) |
 
-**Method:** CPU constraints applied via cgroup v2 `cpu.max` (kernel-level enforcement, equivalent to Kubernetes `resources.limits.cpu`). ResourceQuota and LimitRange YAML also prepared for Kubernetes-native enforcement.
+**Method:** CPU constraints applied via cgroup v2 `cpu.max`. 
 
 ---
 
@@ -207,17 +207,3 @@ When ALL 6 NFs are given **identical 200m CPU limits** (total 1.2 cores), the 5G
 
 ---
 
-## 6. Files & Data
-
-| File | Description |
-|------|-------------|
-| [10-UE metrics](file:///home/venu/cp_stress_test_20260301_144432_10ue_validation/) | Validation test data |
-| [50-UE metrics](file:///home/venu/cp_stress_test_20260301_151019_50ue_fast/) | Moderate load test data |
-| [200-UE metrics](file:///home/venu/cp_stress_test_20260301_151117_200ue_fast/) | Heavy load test data (unconstrained) |
-| [200-UE constrained](file:///home/venu/cp_stress_test_20260301_224029_200ue_mongo5pct/) | MongoDB-only throttle test |
-| [200-UE edge deploy](file:///home/venu/cp_stress_test_20260302_135200_200ue_edge_tight/) | **Edge deployment** (all NFs limited, 1.55 cores) |
-| [200-UE uniform 200m](file:///home/venu/cp_stress_test_20260302_140613_200ue_uniform_200m_v2/) | **Uniform limit** (all NFs at 200m = total outage) |
-| [Edge constraints YAML](file:///home/venu/open5gs-k3s-5g-testbed/configs/edge-resource-constraints.yaml) | ResourceQuota + LimitRange config |
-| [PacketRusher config](file:///home/venu/open5gs-k3s-5g-testbed/configs/packetrusher/config.yml) | PacketRusher configuration |
-| [Subscriber provisioning](file:///home/venu/open5gs-k3s-5g-testbed/scripts/provision_subscribers.sh) | MongoDB bulk insert script |
-| [Stress test script](file:///home/venu/open5gs-k3s-5g-testbed/scripts/cp_stress_test.sh) | Master orchestration script |
