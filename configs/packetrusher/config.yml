@@ -1,0 +1,56 @@
+# PacketRusher config for Open5GS K3s testbed
+# PLMN: 999/70, AMF via NodePort SCTP
+
+gnodeb:
+  controlif:
+    ip: "10.0.0.49"
+    port: 9730
+  dataif:
+    ip: "10.0.0.49"
+    port: 2152
+  plmnlist:
+    mcc: "999"
+    mnc: "70"
+    tac: "000001"
+    gnbid: "000002"
+  slicesupportlist:
+    sst: "01"
+    sd: "ffffff"
+
+ue:
+  hplmn:
+    mcc: "999"
+    mnc: "70"
+  # Starting MSIN — PacketRusher auto-increments for multi-ue
+  # IMSI will be: 999700000000100, 999700000000101, ...
+  msin: "0000000100"
+  routingindicator: "0000"
+  protectionScheme: 0
+  homeNetworkPublicKey: "5a8d38864820197c3394b92613b20b91633cbd897119273bf8e4a6f4eec0a650"
+  homeNetworkPublicKeyID: 1
+  # Same credentials as existing UERANSIM subscribers
+  key: "465B5CE8B199B49FAA5F0A2EE238A6BC"
+  opc: "E8ED289DEBA952E4283B54E88E6183CA"
+  amf: "8000"
+  sqn: "00000000"
+  dnn: "internet"
+  snssai:
+    sst: "01"
+    sd: "ffffff"
+  integrity:
+    nia0: false
+    nia1: true
+    nia2: true
+    nia3: false
+  ciphering:
+    nea0: true
+    nea1: true
+    nea2: true
+    nea3: false
+
+amfif:
+  - ip: "10.0.0.151"
+    port: 38412
+
+logs:
+  level: 4

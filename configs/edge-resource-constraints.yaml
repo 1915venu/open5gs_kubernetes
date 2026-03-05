@@ -1,0 +1,30 @@
+---
+# ResourceQuota: Simulate a 2-core edge deployment
+# Total CPU budget for all control plane pods combined
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: edge-resource-quota
+  namespace: open5gs
+spec:
+  hard:
+    limits.cpu: "2"
+    limits.memory: "4Gi"
+---
+# LimitRange: Set per-container defaults
+# Every container gets a max of 300m CPU unless explicitly overridden
+# MongoDB gets 800m (it needs more to start)
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: edge-limit-range
+  namespace: open5gs
+spec:
+  limits:
+  - default:
+      cpu: "300m"
+      memory: "512Mi"
+    defaultRequest:
+      cpu: "50m"
+      memory: "64Mi"
+    type: Container
