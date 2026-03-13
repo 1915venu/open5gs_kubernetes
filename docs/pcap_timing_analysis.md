@@ -51,8 +51,7 @@
 | Last UE | 13:46:22.851 |
 | **Window** | **418 ms** |
 
-> [!NOTE]
-> Only 11 unique `Initial UE Message` packets appear in the first wave. The remaining 39 UEs piggyback on existing SCTP associations and are carried inside `UplinkNASTransport` messages (Procedure Code 46), which is why the total count of Code 15 packets is 11, not 50.
+
 
 ---
 
@@ -96,6 +95,6 @@
 | Pod 4 | 10.0.0.16 | 1 / 10 | 9 |
 | **Total** | | **29 / 50** | **21 (42% DoS)** |
 
-> [!IMPORTANT]
+> [NOTE]
 > With the 500ms inter-UE delay, all 50 UEs registered successfully (94-100%).  
 > With the 1ms inter-UE delay (instant burst), only 29/50 registered — proving that the AMF cannot handle 50 simultaneous cryptographic handshakes in a 418ms window.
